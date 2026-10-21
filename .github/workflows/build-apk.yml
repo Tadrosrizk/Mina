@@ -1,4 +1,4 @@
-ثمname: Build Android APK
+name: Build Android APK
 
 on:
   push:
@@ -17,7 +17,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
-          java-version: '21' # تم التحديث ليتوافق مع Capacitor
+          java-version: '21'
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -32,7 +32,6 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      # خطوة ضرورية لمزامنة كود الويب مع مشروع الأندرويد
       - name: Sync Capacitor
         run: npx cap sync android
 
