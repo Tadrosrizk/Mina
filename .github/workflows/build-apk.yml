@@ -1,38 +1,45 @@
-name: Android Build
+name: Build Android APK
 
-# متى يتم تشغيل هذا الكود؟ (عند الدفع push أو عمل pull request على فرع main)
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
-    branches: [ "main" ]
+    branches: [ "main" ] # يمكنك تغيير الفرع هنا
+  workflow_dispatch: # يسمح بتشغيل البناء يدوياً
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. جلب الكود الخاص بك من المستودع
+      # 1. سحب الكود من المستودع
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2. إعداد بيئة جافا (الإصدار 17 هو الأفضل لمعظم مشاريع أندرويد الحديثة)
-      - name: Setup Java
+      # 2. إعداد بيئة Java (JDK 17 مطلوب لمعظم إصدارات Android الحديثة)
+      - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
+          distribution: 'temurin'
           java-version: '17'
 
-      # 3. إعداد أندرويد SDK (مع تحديد الإصدار لتجنب توقف التراخيص)
+      # 3. إعداد Android SDK باستخدام الإصدار الرابع (v4)
       - name: Setup Android SDK
-        uses: android-actions/setup-android@v3
+        uses: android-actions/setup-android@v4
         with:
-          cmdline-tools-version: 11479570
+          # حدد الحزم التي تحتاجها فعلاً لتجنب محاولة تثبيت حزم قديمة محذوفة
+          packages: 'platform-tools platforms;android-34 build-tools;34.0.0'
 
-      # 4. إعطاء صلاحية التشغيل لملف Gradle
+      # 4. منح صلاحية التنفيذ لـ Gradle Wrapper (مهم جداً في بيئة Linux)
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      # 5. بناء التطبيق (استخراج ملف APK لنسخة Debug)
-      - name: Build with Gradle
-        run: ./gradlew assembleDebug
+      # 5. بناء ملف APK (إصدار Release)
+      - name: Build Release APK
+        run: ./gradlew assembleRelease --stacktrace
+
+      # 6. رفع ملف APK الناتج كـ Artifact لتحميله من صفحة Actions
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-release
+          path: app/build/outputs/apk/release/*.apk
+          if-no-files-found: error
