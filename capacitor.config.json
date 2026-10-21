@@ -1,0 +1,16 @@
+{
+  "appId": "org.sundayschool.attendance",
+  "appName": "حضور الأحد",
+  "webDir": "www",
+  "backgroundColor": "#1F3358",
+  "android": {
+    "allowMixedContent": false,
+    "webContentsDebuggingEnabled": false
+  },
+  "plugins": {
+    "SystemBars": {
+      "insetsHandling": "native",
+      "style": "DARK"
+    }
+  }
+}
