@@ -7,39 +7,45 @@ on:
 
 jobs:
   build:
-    # تثبيت Ubuntu 24.04 لتجنب مشاكل الانتقال المفاجئ إلى 26.04
     runs-on: ubuntu-24.04
 
     steps:
-      # 1. تحديث checkout إلى الإصدار v6 (يدعم Node.js 24)
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
-      # 2. تحديث setup-java إلى الإصدار v5
+      # إعداد Node.js (مهم جداً لمشاريع Capacitor عشان تثبت الحزم)
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
       - name: Set up JDK 17
-        uses: actions/setup-java@v5
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '17'
 
-      # 3. إعداد Android SDK (يبقى v4 فهو غير متأثر بالتحذيرات)
       - name: Setup Android SDK
         uses: android-actions/setup-android@v4
         with:
           packages: 'platform-tools platforms;android-34 build-tools;34.0.0'
 
-      # 4. منح صلاحية التنفيذ لـ Gradle Wrapper
+      # تثبيت حزم النود (لأن مشروعك فيه package.json)
+      - name: Install dependencies
+        run: npm install
+
+      # منح صلاحية التنفيذ لـ gradlew (الموجود جوه مجلد android)
       - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+        run: chmod +x android/gradlew
 
-      # 5. بناء ملف APK
+      # بناء الـ APK من داخل مجلد android
       - name: Build Release APK
-        run: ./gradlew assembleRelease --stacktrace
+        run: cd android && ./gradlew assembleRelease --stacktrace
 
-      # 6. رفع ملف APK الناتج
+      # رفع الملف الناتج (لاحظ المسار بقى بيبدأ بـ android/)
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: app-release
-          path: app/build/outputs/apk/release/*.apk
+          path: android/app/build/outputs/apk/release/*.apk
           if-no-files-found: error
