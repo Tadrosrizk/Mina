@@ -1,4 +1,4 @@
-name: Build Android APK
+Inname: Build Android APK
 
 on:
   push:
@@ -19,10 +19,11 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
+      # التغيير هنا: v6 و Node 22
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Setup Android SDK
         uses: android-actions/setup-android@v4
