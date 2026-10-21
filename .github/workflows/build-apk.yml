@@ -19,7 +19,6 @@ jobs:
           distribution: 'temurin'
           java-version: '21'
 
-      # التغيير هنا: v6 و Node 22
       - name: Setup Node.js
         uses: actions/setup-node@v6
         with:
@@ -39,8 +38,16 @@ jobs:
       - name: Grant execute permission for gradlew
         run: chmod +x android/gradlew
 
-      - name: Build Release APK
-        run: cd android && ./gradlew assembleRelease --stacktrace
+      # السر كله هنا: عمل مفتاح توقيع وهمي أوتوماتيك وتوقيع التطبيق بيه
+      - name: Build Signed Release APK
+        run: |
+          cd android
+          keytool -genkey -v -keystore release.keystore -alias myalias -keyalg RSA -keysize 2048 -validity 10000 -storepass android -keypass android -dname "CN=Android Debug,O=Android,C=US"
+          ./gradlew assembleRelease \
+            -Pandroid.injected.signing.store.file=$(pwd)/release.keystore \
+            -Pandroid.injected.signing.store.password=android \
+            -Pandroid.injected.signing.key.alias=myalias \
+            -Pandroid.injected.signing.key.password=android
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
