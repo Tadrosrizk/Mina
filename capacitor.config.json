@@ -1,8 +1,8 @@
 {
   "appId": "org.sundayschool.attendance",
-  "appName": "حضور الأحد",
+  "appName": "تي اكليسيا",
   "webDir": "www",
-  "backgroundColor": "#1F3358",
+  "backgroundColor": "#0A2A4F",
   "android": {
     "allowMixedContent": false,
     "webContentsDebuggingEnabled": false
@@ -11,6 +11,13 @@
     "SystemBars": {
       "insetsHandling": "native",
       "style": "DARK"
+    },
+    "PushNotifications": {
+      "presentationOptions": [
+        "badge",
+        "sound",
+        "alert"
+      ]
     }
   }
 }

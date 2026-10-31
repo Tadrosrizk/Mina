@@ -1,0 +1,12 @@
+# Only the settings this project needs. The function authenticates callers itself (JWT + admin role check, or the
+# cron secret), so the platform-level JWT check is turned off to let the scheduled-dispatch cron call it.
+[functions.friday-send-notification]
+verify_jwt = false
+
+# friday-bc-pdf-questions authenticates the caller itself too (JWT + admin role + rate limit), same as above.
+[functions.friday-bc-pdf-questions]
+verify_jwt = false
+
+# friday-bc-generate-questions authenticates the caller itself too (JWT + admin role + rate limits), same as above.
+[functions.friday-bc-generate-questions]
+verify_jwt = false
